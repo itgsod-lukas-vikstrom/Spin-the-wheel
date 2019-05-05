@@ -10,9 +10,24 @@ const App: React.FC = () => {
   const [number, setNumber] = React.useState([] as number[]);
 
   const [slowingDown, setSlowingDown] = React.useState(false);
+  const stage = React.useRef<any>(null);
 
-  const numOfWedges = 3;
+  const numOfWedges = 6;
+  const wheelCoordinates = { x: window.innerWidth / 2, y: 400 };
   const layer = React.useRef<Konva.Layer>(null);
+
+  const onStop = () => {
+    console.log("Stopped");
+    if (stage.current)
+      console.log(
+        stage.current
+          .getIntersection({
+            x: wheelCoordinates.x,
+            y: wheelCoordinates.y / 2 + 35
+          })
+          .id()
+      );
+  };
 
   React.useEffect(() => {
     let temp = [];
@@ -24,12 +39,24 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <Stage width={window.innerWidth} height={window.innerHeight}>
+      <Stage width={window.innerWidth} ref={stage} height={window.innerHeight}>
         <Layer ref={layer}>
           <Wheel
             numOfWedges={numOfWedges}
             numberList={number}
+            coordinates={wheelCoordinates}
             slowingDown={slowingDown}
+            onStop={onStop}
+          />
+          <Wedge
+            angle={50}
+            rotation={245}
+            radius={50}
+            fill={"white"}
+            stroke={"grey"}
+            shadowEnabled={true}
+            x={wheelCoordinates.x}
+            y={wheelCoordinates.y / 2 + 30}
           />
         </Layer>
       </Stage>
